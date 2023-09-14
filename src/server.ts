@@ -15,7 +15,7 @@ app.get("/", async (_req, res) => {
     res.json({ msg: "Hello! There's nothing interesting for GET /." });
 });
 
-app.get("/image", async (req, res) => {
+app.post("/image", async (req, res) => {
     const { link } = req.body;
 
     try {
