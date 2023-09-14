@@ -27,7 +27,15 @@ app.post("/image", async (req, res) => {
             $('meta[property="og:image"]').attr("content") ||
             $("img").attr("src");
 
-        res.send(imageUrl);
+        if (imageUrl) {
+            if (!imageUrl.startsWith("http")) {
+                res.send("no image found");
+            } else {
+                res.send(imageUrl);
+            }
+        } else {
+            res.send("no image found");
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send("An error occurred. Check server logs.");
