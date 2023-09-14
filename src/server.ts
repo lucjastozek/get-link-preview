@@ -15,11 +15,15 @@ app.get("/", async (_req, res) => {
     res.json({ msg: "Hello! There's nothing interesting for GET /." });
 });
 
-app.post("/image", async (req, res) => {
-    const { link } = req.body;
+app.get("/image", async (req, res) => {
+    const { link } = req.query;
+
+    if (!link) {
+        return res.status(400).send("Missing 'link' query parameter.");
+    }
 
     try {
-        const response = await fetch(link);
+        const response = await fetch(link.toString());
         const html = await response.text();
         const $ = cheerio.load(html);
 
