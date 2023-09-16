@@ -2,12 +2,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import * as cheerio from "cheerio";
-import fetch from "node-fetch";
+import morgan from "morgan";
+import axios from "axios";
 
 dotenv.config();
 
 const app = express();
 
+app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 
@@ -23,8 +25,8 @@ app.get("/image", async (req, res) => {
     }
 
     try {
-        const response = await fetch(link.toString());
-        const html = await response.text();
+        const response = await axios.get(link.toString());
+        const html = response.data;
         const $ = cheerio.load(html);
 
         const imageUrl =
