@@ -8,6 +8,7 @@ import axios from "axios";
 dotenv.config();
 
 const app = express();
+const cache = new Map();
 
 app.use(morgan("tiny"));
 app.use(express.json());
@@ -24,6 +25,12 @@ app.get("/image", async (req, res) => {
         return res.status(400).send("Missing 'link' query parameter.");
     }
 
+    if (cache.has(link)) {
+        const cachedImageUrl = cache.get(link);
+        res.send(cachedImageUrl);
+        return;
+    }
+
     try {
         const response = await axios.get(link.toString());
         const html = response.data;
@@ -37,6 +44,7 @@ app.get("/image", async (req, res) => {
             if (!imageUrl.startsWith("http")) {
                 res.send("no image found");
             } else {
+                cache.set(link, imageUrl);
                 res.send(imageUrl);
             }
         } else {
@@ -48,8 +56,12 @@ app.get("/image", async (req, res) => {
     }
 });
 
+app.get("/favicon.ico", (_req, res) => {
+    res.status(204).end();
+});
+
 app.listen(4000, () => {
     console.log(
-        `Server started listening for HTTP requests on port ${4000}.  Let's go!`
+        `Server started listening for HTTP requests on port ${4000}. Let's go!`
     );
 });
